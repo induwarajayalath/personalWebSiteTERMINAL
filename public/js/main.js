@@ -507,7 +507,7 @@ var main = (function () {
 
   Terminal.prototype.bio = function (cmdComponents) {
     this.type(
-      "\nI'm Induwara Jayalath, an Assistant Lecturer at University of Colombo. \n Was a student at University of Colombo School of Computing.\nDirector of GenixLabs(Pvt)Ltd and Owner of GenixInstitute.\nPast pupil of D.S.Senanayake College Colombo 7.\n",
+      "\nGreetings, I am Induwara Jayalath, currently a Software Engineer at GenixLabs (Pvt) Ltd. \nPrior to this, I served as an Assistant Lecturer at the University of Colombo. \nMy academic foundation was laid at the University of Colombo School of Computing, and I'm a proud alumnus of D.S. Senanayake College, Colombo 7. \nThrough my professional journey, I've consistently pursued excellence in leveraging technology to address complex challenges, finding great satisfaction in contributing to the dynamic field of software engineering. \nEach experience, whether in academia or industry, has enriched my perspective and skill set, making me a valuable asset to any team or project. \nI eagerly anticipate the future opportunities and challenges, committed to continued growth and learning in the realms of technology and education.\n",
       this.unlock.bind(this)
     );
   };
