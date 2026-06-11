@@ -36,7 +36,7 @@ var configs = (function () {
       "Change file timestamps. If the file doesn't exist, it's created an empty one.",
     sudo_help: "Execute a command as the superuser.",
     welcome:
-      "Hello welcome to Induwara Jayalath's personal site. \n Here you can find about me !\n Type 'help' to print all commands.\n Type 'gui' for Graphical user interface",
+      "IIIIII N     N DDDDD   U     U W       W   AAAAA   RRRRR    AAAAA\n  II   NN    N D    D  U     U W   W   W  A     A  R    R  A     A\n  II   N N   N D     D U     U W   W   W  AAAAAAA  RRRRR   AAAAAAA\n  II   N  N  N D     D U     U  W W W W   A     A  R  R    A     A\n  II   N   N N D    D  U     U  W W W W   A     A  R   R   A     A\nIIIIII N     N DDDDD    UUUUU    W   W    A     A  R    R  A     A\n\n[boot] loading profile... ok\n[system] Induwara Jayalath terminal initialized\n[system] Type 'help' to print available commands\n",
     internet_explorer_warning:
       "NOTE: I see you're using internet explorer, this website won't work properly.",
     welcome_file_name: "welcome_message.txt",
@@ -57,7 +57,7 @@ var configs = (function () {
     host: "induwara.me",
     user: "guest",
     is_root: false,
-    type_delay: 20,
+    type_delay: 5,
   };
   return {
     getInstance: function (options) {
@@ -81,12 +81,12 @@ var files = (function () {
   Singleton.defaultOptions = {
     "about.txt":
       "This website was made using only pure JavaScript with no extra libraries. I made it dynamic so anyone can use it, just download it from GitHub and change the config text according to your needs.",
-    "contact.txt":
-      "First, go to js/main.js and replace all the text on both singleton vars.\n- configs: All the text used on the website.\n- files: All the fake files used on the website. These files are also used to be listed on the sidenav.\nAlso please notice if a file content is a raw URL, when clicked/concatenated it will be opened on a new tab.\nDon't forget also to:\n- Change the page title on the index.html file\n- Change the website color on the css/main.css\n- Change the images located at the img folder. The suggested sizes are 150x150 for the avatar and 32x32/16x16 for the favicon.",
-    "contact.txt": "Contact me on \n\n contact@induwara.me \n076-6449000 \n ",
+    // "contact.txt":
+    //   "First, go to js/main.js and replace all the text on both singleton vars.\n- configs: All the text used on the website.\n- files: All the fake files used on the website. These files are also used to be listed on the sidenav.\nAlso please notice if a file content is a raw URL, when clicked/concatenated it will be opened on a new tab.\nDon't forget also to:\n- Change the page title on the index.html file\n- Change the website color on the css/main.css\n- Change the images located at the img folder. The suggested sizes are 150x150 for the avatar and 32x32/16x16 for the favicon.",
+    "contact.txt": "Contact me on \n\ncontact@induwara.me \n076-6449000 \n ",
     "facebook.txt": "https://www.facebook.com/induwarajayalath/",
     "instagram.txt": "https://www.instagram.com/induwara.jayalath/",
-    "gui.sh": "https://induwara.me/gui.html",
+    "gui.sh": "https://induwara.me/gui",
   };
   return {
     getInstance: function (options) {
@@ -214,8 +214,8 @@ var main = (function () {
     this.typeSimulator = new TypeSimulator(outputTimer, output);
   };
 
-  Terminal.prototype.type = function (text, callback) {
-    this.typeSimulator.type(text, callback);
+  Terminal.prototype.type = function (text, callback, instant) {
+    this.typeSimulator.type(text, callback, instant);
   };
 
   Terminal.prototype.exec = function () {
@@ -507,13 +507,14 @@ var main = (function () {
 
   Terminal.prototype.bio = function (cmdComponents) {
     this.type(
-      "\nGreetings, I am Induwara Jayalath, currently a Software Engineer at GenixLabs (Pvt) Ltd. \nPrior to this, I served as an Assistant Lecturer at the University of Colombo. \nMy academic foundation was laid at the University of Colombo School of Computing, and I'm a proud alumnus of D.S. Senanayake College, Colombo 7. \nThrough my professional journey, I've consistently pursued excellence in leveraging technology to address complex challenges, finding great satisfaction in contributing to the dynamic field of software engineering. \nEach experience, whether in academia or industry, has enriched my perspective and skill set, making me a valuable asset to any team or project. \nI eagerly anticipate the future opportunities and challenges, committed to continued growth and learning in the realms of technology and education.\n",
+      "\nGreetings, \nI am Induwara Jayalath, currently working as a Software Engineer at IFS R&D International (Pvt) Ltd, and formerly a Founding Member and Director of GenixLabs (Pvt) Ltd. \nPrior to this, I served as an Assistant Lecturer at the University of Colombo. \nMy academic foundation was laid at the Cardiff Metropolitan University UK, University of Colombo School of Computing Colombo 7, and I'm a proud alumnus of D.S. Senanayake College, Colombo 7. \nThrough my professional journey, I've consistently pursued excellence in leveraging technology to address complex challenges, finding great satisfaction in contributing to the dynamic field of software engineering. \nEach experience, whether in academia or industry, has enriched my perspective and skill set, making me a valuable asset to any team or project. \nI eagerly anticipate the future opportunities and challenges, committed to continued growth and learning in the realms of technology and education.\n",
       this.unlock.bind(this)
     );
   };
 
   Terminal.prototype.gui = function (cmdComponents) {
-    this.type("https://induwara.me/gui.html", this.unlock.bind(this));
+    window.open("gui.html", "_blank");
+    this.type("Opening Graphical User Interface...", this.unlock.bind(this));
   };
 
   Terminal.prototype.help = function () {
@@ -541,12 +542,13 @@ var main = (function () {
     if (this.typeSimulator) {
       this.type(
         configs.getInstance().welcome +
-          (isUsingIE
-            ? "\n" + configs.getInstance().internet_explorer_warning
-            : ""),
+        (isUsingIE
+          ? "\n" + configs.getInstance().internet_explorer_warning
+          : ""),
         function () {
           this.unlock();
-        }.bind(this)
+        }.bind(this),
+        true
       );
     }
   };
@@ -595,7 +597,7 @@ var main = (function () {
     this.output = output;
   };
 
-  TypeSimulator.prototype.type = function (text, callback) {
+  TypeSimulator.prototype.type = function (text, callback, instant) {
     if (isURL(text)) {
       window.open(text);
     }
@@ -607,6 +609,15 @@ var main = (function () {
       skipped = true;
     }.bind(this);
     document.addEventListener("dblclick", skip);
+
+    if (instant) {
+      output.innerHTML += text.replace(new RegExp("\n", "g"), "<br/>") + "<br/>";
+      document.removeEventListener("dblclick", skip);
+      scrollToBottom();
+      if (callback) callback();
+      return;
+    }
+
     (function typer() {
       if (i < text.length) {
         var char = text.charAt(i);

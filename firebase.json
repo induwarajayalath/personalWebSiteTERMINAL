@@ -6,7 +6,12 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
     "rewrites": [
+      {
+        "source": "/boo",
+        "destination": "/boo/index.html"
+      },
       {
         "source": "**",
         "destination": "/index.html"
