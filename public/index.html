@@ -1,32 +1,591 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Induwara Jayalath</title>
-    <link rel="icon" href="./img/favicon.png" type="image/x-icon" />
-    <link href="./css/main.css" rel="stylesheet" type="text/css" />
-    <script src="./js/polyfills.js"></script>
-    <script src="./js/main.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Induwara Jayalath — Full Stack Software Engineer | macOS Terminal Portfolio</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Personal interactive portfolio website of Induwara Jayalath styled as an authentic macOS desktop terminal. Explore technical skills, biography, and interactive shell commands.">
+  <meta name="keywords"
+    content="Induwara Jayalath, Software Engineer, Web Developer, Full Stack Developer, macOS Terminal, Portfolio, JavaScript, Node.js, Sri Lanka">
+  <meta name="author" content="Induwara Jayalath">
+  <meta name="theme-color" content="#1e1e24">
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://induwara.me/">
+  <meta property="og:title" content="Induwara Jayalath — macOS Terminal Portfolio">
+  <meta property="og:description"
+    content="Interactive macOS desktop terminal portfolio showcasing skills, experience, and engineering profile of Induwara Jayalath.">
+  <meta property="og:image" content="assets/avatar.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/terminal.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231e1e24%22/><text x=%2250%22 y=%2265%22 font-size=%2250%22 font-family=%22monospace%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22>&gt;_</text></svg>">
 </head>
 
-<body>
-    <div id="sidenav">
-        <button id="sidenavBtn">&#9776;</button>
-        <img id="profilePic" alt="An avatar" src="./img/induwara.jpg">
-    </div>
-    <div id="container">
-        <div id="output"></div>
-        <div id="input-line" class="input-line">
-            <div id="prompt" class="prompt-color"></div>&nbsp;
-            <div>
-                <input type="text" id="cmdline" autocomplete="off" autocorrect="off" autocapitalize="off"
-                    spellcheck="false" autofocus />
-            </div>
+<body data-theme="macos-dark">
+
+  <!-- Desktop Environment -->
+  <div id="desktop">
+
+    <!-- Matrix Rain Canvas Overlay -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- macOS Top Menu Bar -->
+    <header id="macos-menubar" role="banner">
+      <div class="menubar-left">
+        <!-- Apple Menu -->
+        <div class="menubar-item menubar-apple" data-dropdown="apple-menu" title="Apple Menu">
+          
+          <div id="apple-menu" class="menu-dropdown">
+            <div class="menu-item" onclick="main.toggleAboutMac()">About This Mac</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.toggleControlCenter()">System Settings...</div>
+            <div class="menu-item" onclick="main.toggleGuiWindow()">Open Portfolio GUI</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.restartSession()">Restart Terminal Session</div>
+            <div class="menu-item" onclick="main.executeCommand('reboot')">Reboot System</div>
+          </div>
         </div>
+
+        <div class="menubar-item menubar-app-name" data-dropdown="terminal-menu">
+          Terminal
+          <div id="terminal-menu" class="menu-dropdown">
+            <div class="menu-item" onclick="main.executeCommand('help')">About Terminal <span
+                class="menu-shortcut">⌘I</span></div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.toggleControlCenter()">Preferences... <span
+                class="menu-shortcut">⌘,</span></div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.executeCommand('clear')">Clear Scrollback <span
+                class="menu-shortcut">⌘K</span></div>
+          </div>
+        </div>
+
+        <div class="menubar-item menubar-hide-mobile" data-dropdown="shell-menu">
+          Shell
+          <div id="shell-menu" class="menu-dropdown">
+            <div class="menu-item" onclick="main.restartSession()">New Window <span class="menu-shortcut">⌘N</span>
+            </div>
+            <div class="menu-item" onclick="main.executeCommand('neofetch')">Run Neofetch</div>
+            <div class="menu-item" onclick="main.executeCommand('matrix')">Start Matrix Rain</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.executeCommand('clear')">Clear Buffer <span
+                class="menu-shortcut">⌃L</span></div>
+          </div>
+        </div>
+
+        <div class="menubar-item menubar-hide-mobile" data-dropdown="view-menu">
+          View
+          <div id="view-menu" class="menu-dropdown">
+            <div class="menu-item" onclick="document.getElementById('term-max-btn').click()">Toggle Full Screen <span
+                class="menu-shortcut">⌃⌘F</span></div>
+            <div class="menu-item" onclick="main.executeCommand('sound')">Toggle Audio Click</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" onclick="main.executeCommand('theme macos-dark')">Theme: macOS Dark</div>
+            <div class="menu-item" onclick="main.executeCommand('theme homebrew')">Theme: Homebrew (Green)</div>
+            <div class="menu-item" onclick="main.executeCommand('theme dracula')">Theme: Dracula</div>
+            <div class="menu-item" onclick="main.executeCommand('theme matrix')">Theme: Matrix</div>
+            <div class="menu-item" onclick="main.executeCommand('theme cyberpunk')">Theme: Cyberpunk</div>
+          </div>
+        </div>
+
+        <div class="menubar-item menubar-hide-mobile" data-dropdown="help-menu">
+          Help
+          <div id="help-menu" class="menu-dropdown">
+            <div class="menu-item" onclick="main.executeCommand('help')">Terminal Help</div>
+            <div class="menu-item" onclick="main.executeCommand('bio')">Induwara's Bio</div>
+            <div class="menu-item" onclick="main.executeCommand('contact')">Contact Details</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Menubar Status Indicators -->
+      <div class="menubar-right">
+        <!-- Mechanical Sound Button -->
+        <button class="menubar-icon-btn" onclick="main.executeCommand('sound')" title="Toggle Mechanical Audio">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+
+        <!-- Wi-Fi Status -->
+        <div class="menubar-item menubar-hide-mobile" title="Wi-Fi: Connected to Induwara-5G">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+          </svg>
+        </div>
+
+        <!-- Battery Status -->
+        <div class="menubar-item menubar-hide-mobile" title="Battery: 100% (Power Adapter Connected)">
+          <span style="font-size:11px; margin-right:3px;">100%</span>
+          <svg width="18" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
+            <line x1="23" y1="11" x2="23" y2="13"></line>
+            <line x1="4" y1="10" x2="16" y2="10" stroke-width="4"></line>
+          </svg>
+        </div>
+
+        <!-- Control Center Icon -->
+        <button class="menubar-icon-btn" onclick="main.toggleControlCenter()" title="Control Center">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="16" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Live Local Clock -->
+        <div id="live-clock" class="clock-display" title="Current Local Time">
+          Fri Oct 16 3:30 PM
+        </div>
+      </div>
+    </header>
+
+    <!-- Windows Container -->
+    <main id="windows-container">
+
+      <!-- ====================================================================
+           1. macOS Terminal Window
+           ==================================================================== -->
+      <section id="terminal-window" class="macos-window active-window" aria-label="Terminal Window">
+
+        <!-- Window Title Bar -->
+        <div id="terminal-header" class="window-header">
+          <!-- Traffic Lights -->
+          <div class="traffic-lights">
+            <button id="term-close-btn" class="traffic-btn close" title="Close Session" aria-label="Close"></button>
+            <button id="term-min-btn" class="traffic-btn minimize" title="Minimize to Dock"
+              aria-label="Minimize"></button>
+            <button id="term-max-btn" class="traffic-btn maximize" title="Zoom / Fullscreen" aria-label="Zoom"></button>
+          </div>
+
+          <!-- Window Title -->
+          <div class="window-title-container">
+            <svg class="window-folder-icon" viewBox="0 0 24 24" fill="#38bdf8">
+              <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+            </svg>
+            <span class="window-title-text">induwara — -zsh — 80×24</span>
+          </div>
+
+          <!-- Right Window Controls -->
+          <div class="window-controls-right">
+            <button class="window-btn-icon" onclick="main.toggleGuiWindow()" title="Open GUI Mode">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+              GUI Mode
+            </button>
+          </div>
+        </div>
+
+        <!-- Terminal Quick Action Chips Bar -->
+        <div class="terminal-actions-bar" role="toolbar" aria-label="Terminal Command Shortcuts">
+          <button class="action-chip" onclick="main.executeCommand('help')">⚡ help</button>
+          <button class="action-chip" onclick="main.executeCommand('bio')">👨‍💻 bio</button>
+          <button class="action-chip" onclick="main.executeCommand('skills')">🛠️ skills</button>
+          <button class="action-chip" onclick="main.executeCommand('contact')">📬 contact</button>
+          <button class="action-chip" onclick="main.executeCommand('neofetch')">🍎 neofetch</button>
+          <button class="action-chip" onclick="main.executeCommand('ls')">📁 ls</button>
+          <button class="action-chip" onclick="main.executeCommand('gui')">🖥️ gui</button>
+          <button class="action-chip" onclick="main.executeCommand('theme')">🎨 theme</button>
+          <button class="action-chip" onclick="main.executeCommand('clear')">🧹 clear</button>
+        </div>
+
+        <!-- Terminal Screen / Log -->
+        <div id="terminal-screen" class="terminal-screen" tabindex="0" role="region"
+          aria-label="Terminal Output Screen">
+          <div id="terminal-output"></div>
+
+          <!-- Active Prompt & Input Row -->
+          <div class="active-command-row">
+            <div class="prompt-prefix">
+              <span class="prompt-user">guest</span><span style="color:var(--text-dim)">@</span><span
+                class="prompt-host">induwara.me</span> <span id="prompt-path" class="prompt-path">~</span> <span
+                class="prompt-char">%</span>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" id="command-input" class="terminal-real-input" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" autofocus aria-label="Terminal Command Input" />
+              <div class="input-mirror-container">
+                <span id="input-mirror" class="input-mirror"></span><span id="ghost-suggestion"
+                  class="ghost-suggestion"></span><span class="terminal-cursor"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           2. macOS Finder / Portfolio GUI Window
+           ==================================================================== -->
+      <section id="gui-window" class="macos-window" aria-label="Finder Portfolio Window">
+
+        <!-- Header -->
+        <div id="gui-header" class="window-header">
+          <div class="traffic-lights">
+            <button class="traffic-btn close" onclick="main.toggleGuiWindow()" title="Close Window"></button>
+            <button class="traffic-btn minimize" onclick="main.toggleGuiWindow()" title="Minimize Window"></button>
+            <button class="traffic-btn maximize"
+              onclick="document.getElementById('gui-window').classList.toggle('maximized')"
+              title="Maximize Window"></button>
+          </div>
+
+          <div class="window-title-container">
+            <svg class="window-folder-icon" viewBox="0 0 24 24" fill="#3b82f6">
+              <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+            </svg>
+            <span class="window-title-text">Induwara Jayalath — Portfolio Finder</span>
+          </div>
+
+          <div class="window-controls-right">
+            <button class="window-btn-icon" onclick="main.toggleGuiWindow()">Close GUI</button>
+          </div>
+        </div>
+
+        <!-- GUI Layout -->
+        <div class="gui-layout">
+          <!-- Sidebar -->
+          <nav class="gui-sidebar" aria-label="Portfolio Sections">
+            <div class="sidebar-group-title">Favorites</div>
+            <div class="sidebar-nav">
+              <div id="gui-nav-overview" class="sidebar-nav-item active" onclick="main.switchGuiTab('overview')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Overview
+              </div>
+              <div id="gui-nav-skills" class="sidebar-nav-item" onclick="main.switchGuiTab('skills')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                Tech Stack
+              </div>
+              <div id="gui-nav-contact" class="sidebar-nav-item" onclick="main.switchGuiTab('contact')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Contact
+              </div>
+            </div>
+
+            <div class="sidebar-group-title" style="margin-top:auto;">Links</div>
+            <div class="sidebar-nav">
+              <a href="https://github.com/induwarajayalath" target="_blank" class="sidebar-nav-item"
+                style="text-decoration:none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                  </path>
+                </svg>
+                GitHub Profile ↗
+              </a>
+              <a href="https://instagram.com/induwara.jayalath" target="_blank" class="sidebar-nav-item"
+                style="text-decoration:none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                Instagram ↗
+              </a>
+            </div>
+          </nav>
+
+          <!-- Content Pane -->
+          <div class="gui-content-pane">
+            <!-- 1. Overview Tab -->
+            <div id="gui-panel-overview" class="gui-tab-panel active">
+              <div style="display:flex; gap:20px; align-items:center; margin-bottom:20px;">
+                <img src="assets/avatar.jpg" alt="Induwara Jayalath"
+                  style="width:100px; height:100px; border-radius:50%; border:2px solid #38bdf8; box-shadow:0 8px 24px rgba(56,189,248,0.25);" />
+                <div>
+                  <h1 style="font-size:22px; font-weight:700; color:#ffffff; margin-bottom:4px;">Induwara Jayalath</h1>
+                  <p style="font-size:14px; color:#38bdf8; font-weight:500; margin-bottom:8px;">Full Stack Software
+                    Engineer & Web Developer</p>
+                  <p style="font-size:13px; color:#94a3b8; line-height:1.5;">Building robust, high-performance web
+                    applications and beautiful modern user experiences with JavaScript, TypeScript, and Node.js.</p>
+                </div>
+              </div>
+
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-top:20px;">
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+                  <div style="color:#38bdf8; font-size:16px; margin-bottom:4px;">📍 Location</div>
+                  <div style="font-size:13px; color:#f1f5f9; font-weight:600;">Colombo, Sri Lanka</div>
+                  <div style="font-size:12px; color:#94a3b8;">Available worldwide remotely</div>
+                </div>
+
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+                  <div style="color:#10b981; font-size:16px; margin-bottom:4px;">💼 Work Status</div>
+                  <div style="font-size:13px; color:#f1f5f9; font-weight:600;">Open for Teaching Opportunities</div>
+                  <div style="font-size:12px; color:#94a3b8;">Part-time & Freelance</div>
+                </div>
+
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+                  <div style="color:#f59e0b; font-size:16px; margin-bottom:4px;">✉️ Direct Contact</div>
+                  <div style="font-size:13px; color:#f1f5f9; font-weight:600;">contact@induwara.me</div>
+                  <div style="font-size:12px; color:#94a3b8;">Phone: 076-6449000</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Skills Tab -->
+            <div id="gui-panel-skills" class="gui-tab-panel">
+              <h2 style="font-size:16px; color:#ffffff; margin-bottom:14px; font-weight:600;">Technical Competencies
+              </h2>
+              <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:12px;">
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-weight:700; color:#38bdf8; margin-bottom:8px;">Frontend</div>
+                  <div style="font-size:12.5px; color:#cbd5e1; line-height:1.6;">JavaScript
+                    (ES6+)<br>TypeScript<br>Next.js<br>HTML5 / CSS3 / SCSS<br>Responsive UI/UX</div>
+                </div>
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-weight:700; color:#10b981; margin-bottom:8px;">Backend & DB</div>
+                  <div style="font-size:12.5px; color:#cbd5e1; line-height:1.6;">Node.js / Express<br>Python /
+                    FastAPI<br>PostgreSQL / MySQL<br>MongoDB / Redis<br>RESTful APIs & GraphQL</div>
+                </div>
+                <div
+                  style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-weight:700; color:#f59e0b; margin-bottom:8px;">DevOps & Tools</div>
+                  <div style="font-size:12.5px; color:#cbd5e1; line-height:1.6;">Git & GitHub<br>Docker &
+                    Containers<br>AWS Cloud Services<br>Linux Systems<br>Vercel / Netlify</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Contact Tab -->
+            <div id="gui-panel-contact" class="gui-tab-panel">
+              <h2 style="font-size:16px; color:#ffffff; margin-bottom:14px; font-weight:600;">Get in Touch</h2>
+              <div
+                style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:18px; max-width:480px;">
+                <p style="font-size:13px; color:#94a3b8; margin-bottom:14px;">Feel free to reach out for software
+                  engineering inquiries, collaborations, or consultation.</p>
+
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#94a3b8; font-size:13px;">Email:</span>
+                    <a href="mailto:contact@induwara.me"
+                      style="color:#38bdf8; font-weight:600; text-decoration:none;">contact@induwara.me</a>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#94a3b8; font-size:13px;">Phone:</span>
+                    <a href="tel:0766449000"
+                      style="color:#10b981; font-weight:600; text-decoration:none;">076-6449000</a>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#94a3b8; font-size:13px;">Location:</span>
+                    <span style="color:#ffffff; font-size:13px;">Colombo, Sri Lanka</span>
+                  </div>
+                </div>
+
+                <div style="margin-top:16px; display:flex; gap:10px;">
+                  <button class="cmd-badge" onclick="main.copyText('contact@induwara.me')">Copy Email</button>
+                  <button class="cmd-badge" onclick="main.copyText('076-6449000')">Copy Phone</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           3. About This Mac Modal Dialog
+           ==================================================================== -->
+      <div id="about-mac-modal" role="dialog" aria-modal="true" aria-label="About This Mac">
+        <div class="about-mac-header">
+          <div style="font-size:13px; font-weight:600; color:#94a3b8;">About This Mac</div>
+          <button class="traffic-btn close" onclick="main.toggleAboutMac()" title="Close"></button>
+        </div>
+        <div class="about-mac-body">
+          <div class="about-chip-icon">
+            <span style="font-size:24px;"></span>
+            <span style="font-size:10px; font-weight:700; color:#38bdf8; letter-spacing:0.05em;">M3 MAX</span>
+          </div>
+          <div class="about-specs">
+            <div class="about-title">MacBook Pro</div>
+            <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">16-inch, Nov 2024</div>
+            <div class="about-spec-row"><span>Chip:</span> <strong>Apple M3 Max</strong></div>
+            <div class="about-spec-row"><span>Memory:</span> <strong>36 GB Unified Memory</strong></div>
+            <div class="about-spec-row"><span>macOS:</span> <strong>Sequoia 15.1</strong></div>
+            <div class="about-spec-row"><span>Engineer:</span> <strong style="color:#38bdf8;">Induwara Jayalath</strong>
+            </div>
+            <div class="about-spec-row"><span>Serial:</span> <strong>IJ-2026-DEV-MAC</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           4. Control Center Modal
+           ==================================================================== -->
+      <div id="control-center-modal" role="dialog" aria-modal="true" aria-label="Control Center">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span style="font-size:13px; font-weight:700; color:#ffffff;">Control Center</span>
+          <button class="traffic-btn close" onclick="main.toggleControlCenter()" title="Close"></button>
+        </div>
+
+        <!-- Audio Settings -->
+        <div class="control-tile">
+          <div class="control-label">Mechanical Typing Audio</div>
+          <button class="cmd-badge" onclick="main.executeCommand('sound')">Toggle</button>
+        </div>
+
+        <!-- Terminal Theme Selector -->
+        <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:10px 12px;">
+          <div class="control-label" style="margin-bottom:8px;">Terminal Theme</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button class="cmd-badge" onclick="main.executeCommand('theme macos-dark')">Dark</button>
+            <button class="cmd-badge" onclick="main.executeCommand('theme homebrew')">Homebrew</button>
+            <button class="cmd-badge" onclick="main.executeCommand('theme dracula')">Dracula</button>
+            <button class="cmd-badge" onclick="main.executeCommand('theme matrix')">Matrix</button>
+            <button class="cmd-badge" onclick="main.executeCommand('theme solarized')">Solarized</button>
+            <button class="cmd-badge" onclick="main.executeCommand('theme cyberpunk')">Cyberpunk</button>
+          </div>
+        </div>
+
+        <!-- Wallpaper Selector -->
+        <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:10px 12px;">
+          <div class="control-label" style="margin-bottom:8px;">Desktop Wallpaper</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button class="cmd-badge" onclick="main.executeCommand('wallpaper sequoia')">Sequoia</button>
+            <button class="cmd-badge" onclick="main.executeCommand('wallpaper dark')">Dark Minimal</button>
+            <button class="cmd-badge" onclick="main.executeCommand('wallpaper nebula')">Deep Nebula</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ====================================================================
+         macOS Dock
+         ==================================================================== -->
+    <div id="macos-dock-container" role="navigation" aria-label="Application Dock">
+      <div class="macos-dock">
+
+        <!-- 1. Finder / GUI Mode -->
+        <div id="dock-finder" class="dock-item" title="Portfolio Finder">
+          <div class="dock-tooltip">Finder (GUI Mode)</div>
+          <div class="dock-icon-wrapper" style="background:linear-gradient(135deg, #38bdf8, #1d4ed8);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+              <path d="M7 8h10"></path>
+              <path d="M7 12h10"></path>
+              <path d="M7 16h6"></path>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </div>
+
+        <!-- 2. Terminal -->
+        <div id="dock-terminal" class="dock-item running" title="Terminal">
+          <div class="dock-tooltip">Terminal (zsh)</div>
+          <div class="dock-icon-wrapper"
+            style="background:linear-gradient(135deg, #1e293b, #0f172a); border:1px solid rgba(255,255,255,0.2);">
+            <span style="font-family:var(--font-mono); font-size:18px; font-weight:700; color:#38bdf8;">&gt;_</span>
+          </div>
+          <div class="dock-indicator"></div>
+        </div>
+
+        <!-- 3. Safari -->
+        <a href="https://induwara.me" target="_blank" class="dock-item" title="Visit Website"
+          style="text-decoration:none;">
+          <div class="dock-tooltip">Safari (Website)</div>
+          <div class="dock-icon-wrapper" style="background:linear-gradient(135deg, #0284c7, #0369a1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </a>
+
+        <!-- 4. GitHub -->
+        <a href="https://github.com/induwarajayalath" target="_blank" class="dock-item" title="GitHub"
+          style="text-decoration:none;">
+          <div class="dock-tooltip">GitHub</div>
+          <div class="dock-icon-wrapper" style="background:linear-gradient(135deg, #334155, #1e293b);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <path
+                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+              </path>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </a>
+
+        <!-- 5. Mail (Contact) -->
+        <div id="dock-mail" class="dock-item" title="Contact Me">
+          <div class="dock-tooltip">Mail (Contact)</div>
+          <div class="dock-icon-wrapper" style="background:linear-gradient(135deg, #6366f1, #4338ca);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </div>
+
+        <!-- 6. System Settings -->
+        <div id="dock-settings" class="dock-item" title="System Settings & Themes">
+          <div class="dock-tooltip">System Settings</div>
+          <div class="dock-icon-wrapper" style="background:linear-gradient(135deg, #64748b, #475569);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </div>
+
+        <!-- 7. Trash -->
+        <div id="dock-trash" class="dock-item" title="Clear Terminal (Trash)">
+          <div class="dock-tooltip">Trash (Clear)</div>
+          <div class="dock-icon-wrapper" style="background:rgba(255,255,255,0.08);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </div>
+          <div class="dock-indicator"></div>
+        </div>
+
+      </div>
     </div>
 
+  </div>
+
+  <!-- JavaScript Engine -->
+  <script src="js/terminal.js"></script>
 </body>
 
 </html>
